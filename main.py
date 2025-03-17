@@ -2,15 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class TravelingSalesman: #класс коммивояжёра
-    def __init__(self, num_cities, min_coord, max_coord):
-        self.num_cities = num_cities
-        self.min_coord = min_coord
-        self.max_coord = max_coord
-        self.X = np.random.uniform(min_coord, max_coord, num_cities)
-        self.Y = np.random.uniform(min_coord, max_coord, num_cities)
-        self.S = np.arange(num_cities)
+    def __init__(self, coordinates):
+        self.num_cities = len(coordinates)
+        self.X = np.array([coord[0] for coord in coordinates])
+        self.Y = np.array([coord[1] for coord in coordinates])
+        self.S = np.arange(self.num_cities)
         np.random.shuffle(self.S)
-
+        
     def calculate_distance(self, order): #ф-ия подсчета дистанции
         total_distance = 0
         for i in range(len(order) - 1):
@@ -47,19 +45,27 @@ class TravelingSalesman: #класс коммивояжёра
     def plot_path(self, order):
         plt.plot(self.X[order], self.Y[order], '-*')
         plt.title(f"Total Distance: {self.calculate_distance(order):.6f}")
+        plt.xlabel("X Coordinate")
+        plt.ylabel("Y Coordinate")
         plt.show()
 
 if __name__ == "__main__":
-    num_cities = 20
-    min_coord, max_coord = 0, 10
+    # Фиксированные координаты для 20 городов
+    coordinates = [
+        (0, 0), (1, 8), (2, 1), (3, 5), (4, 2), 
+        (5, 7), (6, 9), (7, 8), (8, 3), (9, 5),
+        (1, 0), (2, 3), (3, 4), (4, 7), (5, 3),
+        (6, 5), (7, 8), (8, 3), (9, 4), (0, 1)
+    ]
+
     t_max = 1000
     t_min = 0.001
     k_max = 1000000
 
-    salesman = TravelingSalesman(num_cities, min_coord, max_coord) #создание класса коммивояжёра
+    salesman = TravelingSalesman(coordinates) #создание класса коммивояжёра
     print(f"Initial Order: {salesman.S}\nInitial Distance: {salesman.calculate_distance(salesman.S):.6f}")
 
-    for i in range(3):
+    for i in range(5):
         total_distance, iterations, optimal_order = salesman.minimize_path(t_max, t_min, k_max)
         print(f"Iteration {i+1} - Total Distance: {total_distance:.6f}, Iterations: {iterations}, Optimal order: {optimal_order}")
         salesman.plot_path(optimal_order)
